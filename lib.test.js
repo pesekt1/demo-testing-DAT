@@ -100,7 +100,7 @@ describe("fizzBuzz", () => {
   });
 
   it("should return input if input is not divisible by 3 or 5", () => {
-    const args = [1, 2, 4, 7, 8, 11, 13, 14];
+    const args = [-1, 1, 2, 4, 7, 8, 11, 13, 14];
     args.forEach((a) => expect(fizzBuzz(a)).toBe(a));
   });
 });
