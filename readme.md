@@ -28,5 +28,5 @@ in package.json, you can add extra flags to your tests:
 - test arrays - getCurrencies
 - test objects - getProduct
 - test exceptions - registerUser
-- 
+- ... test everything :-D 
 
