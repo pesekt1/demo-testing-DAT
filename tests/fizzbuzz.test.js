@@ -1,4 +1,4 @@
-import fizzBuzz from "./fizzBuzz";
+import fizzBuzz from "../fizzBuzz";
 
 describe("fizzBuzz", () => {
   it("should throw an exception if input is not a number", () => {

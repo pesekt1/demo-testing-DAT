@@ -1,5 +1,6 @@
-import lib from "./lib";
-import fizzBuzz from "./fizzBuzz";
+import lib from "../lib";
+import db from "../db";
+import mail from "../mail";
 
 describe("absolute", () => {
   it("should return a positive number if input is positive", () => {
@@ -71,5 +72,57 @@ describe("registerUser", () => {
     const result = lib.registerUser("mosh");
     expect(result).toMatchObject({ username: "mosh" });
     expect(result.id).toBeGreaterThan(0);
+  });
+});
+
+// Mock functions
+describe("applyDiscount", () => {
+  it("should give 10% discount if customer has more than 10 points", () => {
+    //we replace getCustomerSync with our mock function:
+    db.getCustomerSync = function (customerId) {
+      console.log("fake reading customer");
+      return { id: customerId, points: 20 };
+    };
+    const order = { customerId: 1, totalPrice: 10 };
+    lib.applyDiscount(order);
+    expect(order.totalPrice).toBe(9);
+  });
+});
+
+//interaction testing - function gets a customer id and sends email
+describe("notifyCustomer", () => {
+  it("should send an email to a customer", () => {
+    //mock db.getCustomerSync function:
+    db.getCustomerSync = function (customerId) {
+      console.log("fake reading customer");
+      return { email: "email" };
+    };
+
+    let mailIsSent = false; //initialize to false
+    //mock mail.send function:
+    mail.send = function (to, subject) {
+      console.log("Sending an email...");
+      mailIsSent = true;
+    };
+
+    const order = { customerId: 1 };
+    lib.notifyCustomer(order);
+    expect(mailIsSent).toBe(true);
+  });
+});
+
+//better solution for notifyCustomer
+describe("notifyCustomer2", () => {
+  it("should send an email to a customer", () => {
+    db.getCustomerSync = jest.fn().mockReturnValue({ email: "email" });
+    mail.send = jest.fn();
+
+    lib.notifyCustomer({ customerId: 1 });
+
+    expect(mail.send).toHaveBeenCalled(); //check if it has been called
+    //check if first argument was "email"
+    expect(mail.send.mock.calls[0][0]).toBe("email");
+    //check if second argument contained "order"
+    expect(mail.send.mock.calls[0][1]).toMatch(/order/);
   });
 });
